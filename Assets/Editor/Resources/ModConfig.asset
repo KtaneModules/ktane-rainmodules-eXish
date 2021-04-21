@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
+  m_Name: ModConfig
+  m_EditorClassIdentifier: 
+  id: rainModules
+  title: Rain Modules
+  author: eXish
+  description: "Two modules which are all about different shades of blue. One is a
+    regular variant, one is a cruel variant. I'll let you guess which is which.\n\r\nRain:\r\nHTML:
+    https://ktane.timwi.de/HTML/Rain.html\r\nPDF: https://ktane.timwi.de/PDF/Rain.pdf\r\n\r\nRain
+    Hell:\r\nHTML: https://ktane.timwi.de/HTML/Rain%20Hell.html\r\nPDF: https://ktane.timwi.de/PDF/Rain%20Hell.pdf\r\n\r\nRain
+    (rainModule) v1.0.1\nRain Hell (rainHellModule) v1.0.1\nModules and Concepts by
+    eXish\r\nTwitch Plays supported"
+  version: 1.0.1
+  outputFolder: build
+  previewImage: {fileID: 2800000, guid: a678e47bac6888c469a3faee87734e23, type: 3}
