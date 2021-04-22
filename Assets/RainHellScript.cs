@@ -15,16 +15,17 @@ public class RainHellScript : MonoBehaviour {
     public MeshRenderer[] dropRenderers;
     public GameObject[] redDrops;
 
-    private Material[] privateColorMats = new Material[11];
+    private Material[] privateColorMats = new Material[9];
     private List<int> whiteSpots = new List<int>() { 2, 5, 8, 11, 15, 18, 21 };
     private int[][] sequenceColors = new int[25][];
     private int[] redFlashes = new int[26];
-    private string[] colorNames = { "Azure", "Baby Blue", "Cornflower", "Electric", "Maya", "Navy", "Olympic", "Prussian", "Teal", "Turquoise" };
-    private bool[] correctDrops;
-    private bool[] isPressed;
-    private bool hasPlayed;
+    private string[] colorNames = { "Azure", "Baby Blue", "Cornflower", "Electric", "Navy", "Prussian", "Steel", "Teal" };
+    private bool[] correctDrops = new bool[25];
+    private bool[] isPressed = new bool[25];
+    private bool hasPlayed = false;
     private bool isPlaying = false;
-    private bool justStruck = true;
+    private bool noLogRegen = true;
+    private int numRedsCorrect;
 
     static int moduleIdCounter = 1;
     int moduleId;
@@ -39,16 +40,11 @@ public class RainHellScript : MonoBehaviour {
             KMSelectable pressed = obj;
             pressed.OnInteract += delegate () { PressButton(pressed); return false; };
         }
-        for (int i = 0; i < 11; i++)
+        for (int i = 0; i < 9; i++)
             privateColorMats[i] = new Material(colorMats[i]);
     }
 
     void Start () {
-        for (int i = 0; i < 25; i++)
-            dropRenderers[i].material = colorMats[0];
-        hasPlayed = false;
-        isPressed = new bool[25];
-        correctDrops = new bool[25];
         redo:
         for (int i = 0; i < 25; i++)
         {
@@ -58,9 +54,9 @@ public class RainHellScript : MonoBehaviour {
             for (int j = 0; j < 26; j++)
             {
                 if (whiteSpots.Contains(j))
-                    nums[j] = 10;
+                    nums[j] = 8;
                 else
-                    nums[j] = UnityEngine.Random.Range(0, 10);
+                    nums[j] = UnityEngine.Random.Range(0, 8);
             }
             if (IsValidSequence(nums) && rando == 0)
                 goto regen;
@@ -88,9 +84,9 @@ public class RainHellScript : MonoBehaviour {
             string seq = colorNames[sequenceColors[i][0]];
             for (int k = 1; k < 26; k++)
             {
-                if (sequenceColors[i][k] == 10)
+                if (sequenceColors[i][k] == 8)
                     seq += " |";
-                else if (sequenceColors[i][k - 1] == 10)
+                else if (sequenceColors[i][k - 1] == 8)
                     seq += " " + colorNames[sequenceColors[i][k]];
                 else
                     seq += ", " + colorNames[sequenceColors[i][k]];
@@ -128,8 +124,8 @@ public class RainHellScript : MonoBehaviour {
                 isPlaying = true;
                 if (!hasPlayed)
                     hasPlayed = true;
-                if (justStruck)
-                    justStruck = false;
+                if (noLogRegen)
+                    noLogRegen = false;
                 else
                 {
                     Debug.LogFormat("[Rain Hell #{0}] Regenerating red flashes and clearing pressed raindrops due to replaying of the sequence...", moduleId);
@@ -142,20 +138,19 @@ public class RainHellScript : MonoBehaviour {
                 pressed.AddInteractionPunch(0.5f);
                 if (!hasPlayed)
                 {
-                    justStruck = true;
-                    Debug.LogFormat("[Rain Hell #{0}] Attempted to interact with a raindrop button before playing the sequence. Strike! Resetting module...", moduleId);
+                    noLogRegen = true;
+                    Debug.LogFormat("[Rain Hell #{0}] Attempted to interact with a raindrop button before playing the sequence. Strike!", moduleId);
                     GetComponent<KMBombModule>().HandleStrike();
-                    Start();
                     return;
                 }
                 if (isPlaying || isPressed[Array.IndexOf(buttons, pressed) - 1]) return;
-                else if (correctDrops[Array.IndexOf(buttons, pressed) - 1])
+                else if (correctDrops[Array.IndexOf(buttons, pressed) - 1] && !redFlashes.Contains(Array.IndexOf(buttons, pressed) - 1))
                 {
                     Debug.LogFormat("[Rain Hell #{0}] Pressed raindrop {1}, which is correct.", moduleId, Array.IndexOf(buttons, pressed));
                     isPressed[Array.IndexOf(buttons, pressed) - 1] = true;
                     audio.PlaySoundAtTransform("drop" + UnityEngine.Random.Range(1, 4), pressed.transform);
-                    dropRenderers[Array.IndexOf(buttons, pressed) - 1].material = colorMats[11];
-                    if (correctDrops.Where(x => x == true).Count() == isPressed.Where(x => x == true).Count())
+                    dropRenderers[Array.IndexOf(buttons, pressed) - 1].material = colorMats[9];
+                    if ((correctDrops.Where(x => x == true).Count() - numRedsCorrect) == isPressed.Where(x => x == true).Count())
                     {
                         moduleSolved = true;
                         GetComponent<KMBombModule>().HandlePass();
@@ -164,10 +159,9 @@ public class RainHellScript : MonoBehaviour {
                 }
                 else
                 {
-                    justStruck = true;
-                    Debug.LogFormat("[Rain Hell #{0}] Pressed raindrop {1}, which is incorrect. Strike! Resetting module...", moduleId, Array.IndexOf(buttons, pressed));
+                    noLogRegen = true;
+                    Debug.LogFormat("[Rain Hell #{0}] Pressed raindrop {1}, which is incorrect. Strike!", moduleId, Array.IndexOf(buttons, pressed));
                     GetComponent<KMBombModule>().HandleStrike();
-                    Start();
                 }
             }
         }
@@ -176,9 +170,10 @@ public class RainHellScript : MonoBehaviour {
     private void RegenReds()
     {
         redored:
+        numRedsCorrect = 0;
         List<int> reds = new List<int>();
         List<int> redsLogging = new List<int>();
-        int numOfReds = UnityEngine.Random.Range(4, 7);
+        int numOfReds = UnityEngine.Random.Range(3, 6);
         for (int i = 0; i < numOfReds; i++)
         {
             int choice = UnityEngine.Random.Range(0, 25);
@@ -201,6 +196,8 @@ public class RainHellScript : MonoBehaviour {
         {
             if (!redFlashes.Contains(reds[i]))
                 goto redored;
+            if (correctDrops[reds[i]])
+                numRedsCorrect++;
         }
         redsLogging.Sort();
         Debug.LogFormat("[Rain Hell #{0}] The raindrops that are flashing red are: {1}", moduleId, redsLogging.Join(", "));
@@ -211,7 +208,7 @@ public class RainHellScript : MonoBehaviour {
         List<int> set = new List<int>();
         for (int i = 0; i < sequence.Length; i++)
         {
-            if (sequence[i] == 10)
+            if (sequence[i] == 8)
                 set.Clear();
             else
             {
@@ -255,7 +252,7 @@ public class RainHellScript : MonoBehaviour {
         while (t > 0f)
         {
             yield return null;
-            for (int i = 0; i < 11; i++)
+            for (int i = 0; i < 9; i++)
                 privateColorMats[i].SetFloat("_Blend", t);
             t -= Time.deltaTime * 5f;
         }
@@ -268,7 +265,7 @@ public class RainHellScript : MonoBehaviour {
         while (t < 1f)
         {
             yield return null;
-            for (int i = 0; i < 11; i++)
+            for (int i = 0; i < 9; i++)
                 privateColorMats[i].SetFloat("_Blend", t);
             t += Time.deltaTime * 5f;
         }
@@ -372,7 +369,7 @@ public class RainHellScript : MonoBehaviour {
         }
         for (int i = 0; i < 25; i++)
         {
-            if (correctDrops[i] && !isPressed[i])
+            if (correctDrops[i] && !isPressed[i] && !redFlashes.Contains(i))
             {
                 buttons[i + 1].OnInteract();
                 yield return new WaitForSeconds(0.1f);
