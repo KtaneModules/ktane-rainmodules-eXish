@@ -138,7 +138,6 @@ public class RainHellScript : MonoBehaviour {
                 pressed.AddInteractionPunch(0.5f);
                 if (!hasPlayed)
                 {
-                    noLogRegen = true;
                     Debug.LogFormat("[Rain Hell #{0}] Attempted to interact with a raindrop button before playing the sequence. Strike!", moduleId);
                     GetComponent<KMBombModule>().HandleStrike();
                     return;
@@ -159,7 +158,6 @@ public class RainHellScript : MonoBehaviour {
                 }
                 else
                 {
-                    noLogRegen = true;
                     Debug.LogFormat("[Rain Hell #{0}] Pressed raindrop {1}, which is incorrect. Strike!", moduleId, Array.IndexOf(buttons, pressed));
                     GetComponent<KMBombModule>().HandleStrike();
                 }
