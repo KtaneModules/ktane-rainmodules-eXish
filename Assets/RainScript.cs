@@ -211,7 +211,7 @@ public class RainScript : MonoBehaviour {
 
     //twitch plays
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} start [Presses the ""Start Rainfall"" button] | !{0} press <p1> (p2)... [Presses the raindrop button(s) in the specified postion(s)] | Valid positions are 1-9 in reading order or tl, mm, br, etc.";
+    private readonly string TwitchHelpMessage = @"!{0} start [Presses the ""Start Rainfall"" button] | !{0} startfocus [Presses the ""Start Rainfall"" button AND focuses on the module (use if zooming)] | !{0} press <p1> (p2)... [Presses the raindrop button(s) in the specified postion(s)] | Valid positions are 1-9 in reading order or tl, mm, br, etc.";
     #pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string command)
@@ -226,6 +226,14 @@ public class RainScript : MonoBehaviour {
         {
             yield return null;
             buttons[0].OnInteract();
+            yield break;
+        }
+        if (Regex.IsMatch(command, @"^\s*startfocus\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+            yield return null;
+            buttons[0].OnInteract();
+            while (isPlaying)
+                yield return "trycancel Focus on sequence cancelled due to cancel request.";
             yield break;
         }
         string[] parameters = command.Split(' ');
