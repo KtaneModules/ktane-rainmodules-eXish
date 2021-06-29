@@ -181,6 +181,8 @@ public class RainScript : MonoBehaviour {
             if (isPressed[i])
                 dropRenderers[i].material = colorMats[6];
         }
+        for (int i = 0; i < 6; i++)
+            privateColorMats[i].SetFloat("_Blend", 1);
         isPlaying = false;
     }
 

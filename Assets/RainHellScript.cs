@@ -241,6 +241,8 @@ public class RainHellScript : MonoBehaviour {
             if (isPressed[i])
                 isPressed[i] = false;
         }
+        for (int i = 0; i < 9; i++)
+            privateColorMats[i].SetFloat("_Blend", 1);
         isPlaying = false;
     }
 
