@@ -31,17 +31,10 @@ public class RainHellScript : MonoBehaviour {
     int moduleId;
     private bool moduleSolved;
 
-    private RainSettings Settings = new RainSettings();
-
     void Awake()
     {
         moduleId = moduleIdCounter++;
         moduleSolved = false;
-        ModConfig<RainSettings> modConfig = new ModConfig<RainSettings>("RainSettings");
-        //Read from the settings file, or create one if one doesn't exist
-        Settings = modConfig.Settings;
-        //Update the settings file incase there was an error during read
-        modConfig.Settings = Settings;
         foreach (KMSelectable obj in buttons)
         {
             KMSelectable pressed = obj;
@@ -229,8 +222,7 @@ public class RainHellScript : MonoBehaviour {
     {
         yield return null;
         float[] times = { 0.475f, 0.475f, 0.75f, 0.475f, 0.475f, 0.75f, 0.475f, 0.475f, 0.75f, 0.475f, 0.475f, 0.475f, 0.475f, 0.475f, 0.475f, 0.75f, 0.475f, 0.475f, 0.75f, 0.475f, 0.475f, 0.75f, 0.475f, 0.475f, 0.475f, 0.475f };
-        if (!Settings.noCopyrightMusic)
-            audio.PlaySoundAtTransform("sequencehell", transform);
+        audio.PlaySoundAtTransform("sequencehell", transform);
         StartCoroutine(RedFlashes());
         for (int k = 0; k < 26; k++)
         {
@@ -392,25 +384,4 @@ public class RainHellScript : MonoBehaviour {
             }
         }
     }
-
-    class RainSettings
-    {
-        public bool noCopyrightMusic = false;
-    }
-
-    static Dictionary<string, object>[] TweaksEditorSettings = new Dictionary<string, object>[]
-    {
-        new Dictionary<string, object>
-        {
-            { "Filename", "RainSettings.json" },
-            { "Name", "Rain Settings" },
-            { "Listing", new List<Dictionary<string, object>>{
-                new Dictionary<string, object>
-                {
-                    { "Key", "noCopyrightMusic" },
-                    { "Text", "Disables the copyright music normally played by the module." }
-                },
-            } }
-        }
-    };
 }
