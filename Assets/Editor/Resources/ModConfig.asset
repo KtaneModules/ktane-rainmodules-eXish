@@ -18,8 +18,8 @@ MonoBehaviour:
     regular variant, one is a cruel variant. I'll let you guess which is which.\n\r\nRain:\r\nHTML:
     https://ktane.timwi.de/HTML/Rain.html\r\nPDF: https://ktane.timwi.de/PDF/Rain.pdf\r\n\r\nRain
     Hell:\r\nHTML: https://ktane.timwi.de/HTML/Rain%20Hell.html\r\nPDF: https://ktane.timwi.de/PDF/Rain%20Hell.pdf\r\n\r\nRain
-    (rainModule) v1.1.0\nRain Hell (rainHellModule) v1.1.2\nModules and Concepts by
+    (rainModule) v1.1.1\nRain Hell (rainHellModule) v1.1.3\nModules and Concepts by
     eXish\r\nTwitch Plays supported"
-  version: 1.1.2
+  version: 1.1.3
   outputFolder: build
   previewImage: {fileID: 2800000, guid: a678e47bac6888c469a3faee87734e23, type: 3}
